@@ -8,6 +8,11 @@ class GraphSerializer(serializers.ModelSerializer):
 		model = models.Graph
 		fields = ('id', 'name', 'title', 'group', 'url', 'command', 'priority')
 
+	def validate(self, attrs):
+		instance = GraphSerializer.Meta.model(**attrs)
+		instance.clean()
+		return attrs
+
 class GraphGroupSerializer(serializers.ModelSerializer):
 	graphs = GraphSerializer(many=True)
 
