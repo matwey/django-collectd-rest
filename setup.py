@@ -1,4 +1,5 @@
 import os
+import sys
 from setuptools import setup
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
@@ -29,4 +30,5 @@ setup(
 		'Topic :: Internet :: WWW/HTTP',
 		'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
 	],
+	test_suite='runtests.runtests'
 )
