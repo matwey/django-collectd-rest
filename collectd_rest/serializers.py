@@ -2,7 +2,7 @@ from collectd_rest import models
 from rest_framework import serializers
 
 class GraphSerializer(serializers.ModelSerializer):
-	url = serializers.HyperlinkedIdentityField(view_name='graph-detail')
+	url = serializers.HyperlinkedIdentityField(view_name='graph-detail', lookup_field='name')
 
 	class Meta:
 		model = models.Graph
