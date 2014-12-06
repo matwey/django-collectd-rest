@@ -14,4 +14,3 @@ class GraphViewSet(viewsets.ModelViewSet):
 	queryset = models.Graph.objects.all()
 	serializer_class = serializers.GraphSerializer
 	renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [renderers.PNGRenderer, ]
-	lookup_field = 'name'
