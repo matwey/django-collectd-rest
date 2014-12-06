@@ -25,6 +25,42 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		graph = Graph.objects.get(name='graph1')
 		mock.assert_called_with(command, format)
+	@patch('collectd_rest.models.render')
+	def test_graph_create2(self, mock):
+		command = 'format'
+		format = 'PNG'
+
+		url = reverse('graph-list')
+		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		# name is missed here
+		response = self.client.post(url, {
+			'title': 'New Graph',
+			'group': group.name,
+			'command': command}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		# title may be missed here
+		response = self.client.post(url, {
+			'name': 'graph2',
+			'group': group.name,
+			'command': command}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		graph = Graph.objects.get(name='graph2')
+		self.assertEqual(graph.title, "")
+		# group is missed here
+		response = self.client.post(url, {
+			'title': 'New Graph',
+			'name': 'graph3',
+			'command': command}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+	def test_graph_create3(self):
+		url = reverse('graph-list')
+		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		# command is missed here
+		response = self.client.post(url, {
+			'title': 'New Graph',
+			'name': 'graph1',
+			'group': group.name}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	@patch('collectd_rest.models.render')
 	def test_graph_create_duplicates(self, mock):
