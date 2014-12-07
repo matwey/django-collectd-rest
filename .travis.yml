@@ -4,6 +4,7 @@ env:
   - "DJANGO_VERSION='>=1.7,<1.8'"
   - "DJANGO_VERSION=''"
 python:
+  - "2.7"
   - "3.3"
   - "3.4"
 # command to install dependencies
