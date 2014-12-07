@@ -3,8 +3,10 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 from collectd_rest.models import Graph, GraphGroup
-from unittest.mock import patch, create_autospec
-import collectd_rest.models
+try:
+	from unittest.mock import patch, create_autospec
+except ImportError:
+	from mock import patch, create_autospec
 
 class GraphTest(TestCase):
 	def setUp(self):
