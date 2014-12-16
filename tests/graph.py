@@ -91,3 +91,17 @@ class GraphTest(TestCase):
 			'command': command}, format='json')
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(len(Graph.objects.filter(name='graph')),2)
+
+	@patch('collectd_rest.renderers.render')
+	def test_graph_render1(self, mock):
+		command = 'format'
+		format = 'PNG'
+		mime = "image/png"
+
+		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		graph = Graph.objects.create(name="graph1", title="Graph 1", command = command, group=group)
+		url = reverse('graph-detail', args=[graph.id])
+		response = self.client.get(url, HTTP_ACCEPT=mime)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response["Content-Type"], mime)
+		mock.assert_called_with(command, format)
