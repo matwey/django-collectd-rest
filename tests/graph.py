@@ -3,6 +3,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 from collectd_rest.models import Graph, GraphGroup
+from collectd_rest.rrd import RRDError
 try:
 	from unittest.mock import patch, create_autospec
 except ImportError:
@@ -12,7 +13,7 @@ class GraphTest(TestCase):
 	def setUp(self):
 		self.client = APIClient()
 
-	@patch('collectd_rest.models.render')
+	@patch('collectd_rest.serializers.render')
 	def test_graph_create1(self, mock):
 		command = 'format'
 		format = 'PNG'
@@ -27,7 +28,7 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		graph = Graph.objects.get(name='graph1')
 		mock.assert_called_with(command, format)
-	@patch('collectd_rest.models.render')
+	@patch('collectd_rest.serializers.render')
 	def test_graph_create2(self, mock):
 		command = 'format'
 		format = 'PNG'
@@ -64,7 +65,7 @@ class GraphTest(TestCase):
 			'group': group.name}, format='json')
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-	@patch('collectd_rest.models.render')
+	@patch('collectd_rest.serializers.render')
 	def test_graph_create_duplicates(self, mock):
 		command = 'format'
 		format = 'PNG'
@@ -105,3 +106,18 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response["Content-Type"], mime)
 		mock.assert_called_with(command, format)
+
+	@patch('collectd_rest.serializers.render')
+	def test_graph_validate1(self, mock):
+		mock.side_effect = RRDError('Boom!')
+		command = "wrong command"
+
+		url = reverse('graph-list')
+		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		response = self.client.post(url, {
+			'title': 'New Graph',
+			'name': 'graph1',
+			'group': group.name,
+			'command': command}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.content,b"{\"command\":[\"Boom!\"]}")

@@ -19,10 +19,3 @@ class Graph(models.Model):
 
 	def render(self, format):
 		return render(self.command, format)
-
-	def clean(self):
-		try:
-			self.render('PNG')
-		except RRDError as e:
-			raise ValidationError({'command':e.message})
-
