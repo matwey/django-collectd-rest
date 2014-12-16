@@ -17,9 +17,12 @@ class Graph(models.Model):
 		unique_together = ("name", "group")
 		ordering = ['-priority']
 
+	def render(self, format):
+		return render(self.command, format)
+
 	def clean(self):
 		try:
-			render(self.command, 'PNG')
+			self.render('PNG')
 		except RRDError as e:
 			raise ValidationError({'command':e.message})
 
