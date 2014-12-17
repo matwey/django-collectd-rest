@@ -5,6 +5,7 @@ class RRDError(Exception):
 		self.message = message
 
 def render(command, format):
+	format = format.upper()
 	args = ['rrdtool','graph','-','--imgformat',format] + shlex.split(command)
 	p = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	code = p.wait()

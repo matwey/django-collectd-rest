@@ -1,5 +1,6 @@
 from collectd_rest import models
 from collectd_rest.rrd import render, RRDError
+from collectd_rest.renderers import ImageRenderer
 from rest_framework import serializers
 
 class CommandField(serializers.CharField):
@@ -11,6 +12,11 @@ class CommandField(serializers.CharField):
 			render(data, "PNG")
 		except RRDError as e:
 			raise serializers.ValidationError(e.message)
+		return data
+	def to_representation(self, data):
+		renderer = self.context['request'].accepted_renderer
+		if isinstance(renderer, ImageRenderer):
+			return render(data, renderer.format)
 		return data
 
 class GraphSerializer(serializers.ModelSerializer):

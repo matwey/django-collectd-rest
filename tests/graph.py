@@ -31,7 +31,7 @@ class GraphTest(TestCase):
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create2(self, mock):
 		command = 'format'
-		format = 'PNG'
+		format = 'png'
 
 		url = reverse('graph-list')
 		group = GraphGroup.objects.create(name="group1", title="Group 1")
@@ -68,7 +68,7 @@ class GraphTest(TestCase):
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create_duplicates(self, mock):
 		command = 'format'
-		format = 'PNG'
+		format = 'png'
 
 		url = reverse('graph-list')
 		group1 = GraphGroup.objects.create(name="group1", title="Group 1")
@@ -93,11 +93,8 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(len(Graph.objects.filter(name='graph')),2)
 
-	@patch('collectd_rest.renderers.render')
-	def test_graph_render1(self, mock):
+	def graph_render_helper(self, mock, mime, format):
 		command = 'format'
-		format = 'PNG'
-		mime = "image/png"
 
 		group = GraphGroup.objects.create(name="group1", title="Group 1")
 		graph = Graph.objects.create(name="graph1", title="Graph 1", command = command, group=group)
@@ -106,6 +103,18 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response["Content-Type"], mime)
 		mock.assert_called_with(command, format)
+
+	@patch('collectd_rest.serializers.render')
+	def test_graph_render_png(self, mock):
+		format = 'png'
+		mime = "image/png"
+		self.graph_render_helper(mock, mime, format)
+
+	@patch('collectd_rest.serializers.render')
+	def test_graph_render_svg(self, mock):
+		format = 'svg'
+		mime = "image/svg+xml"
+		self.graph_render_helper(mock, mime, format)
 
 	@patch('collectd_rest.serializers.render')
 	def test_graph_validate1(self, mock):
