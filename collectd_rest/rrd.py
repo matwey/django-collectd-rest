@@ -8,7 +8,7 @@ def render(command, format):
 	format = format.upper()
 	args = ['rrdtool','graph','-','--imgformat',format] + shlex.split(command)
 	p = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	code = p.wait()
-	if code != 0:
-		raise RRDError(p.stderr.read())
-	return p.stdout.read()
+	outs, errs = p.communicate()
+	if p.returncode != 0:
+		raise RRDError(errs)
+	return outs
