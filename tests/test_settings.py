@@ -3,6 +3,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 SECRET_KEY = 'fake-key'
 INSTALLED_APPS = [
+	'django.contrib.contenttypes',
+	'django.contrib.auth',
 	'rest_framework',
 	'collectd_rest',
 ]
