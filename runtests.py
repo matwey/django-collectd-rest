@@ -12,7 +12,7 @@ def runtests():
 		pass
 	from django.core.management import call_command
 
-	os.sys.exit(call_command("test", "tests.__init__", verbosity=2))
+	os.sys.exit(call_command("test", "tests.test_all", verbosity=2))
 
 if __name__ == "__main__":
 	runtests()
