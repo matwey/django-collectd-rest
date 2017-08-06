@@ -13,7 +13,7 @@ python:
 # command to install dependencies
 install:
   - "pip install Django$DJANGO_VERSION"
-  - "pip install -i requirements.txt"
+  - "pip install -r requirements.txt"
 # command to run tests
 script:
   - "python setup.py test"
