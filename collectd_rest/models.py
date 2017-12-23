@@ -10,7 +10,7 @@ class Graph(models.Model):
 	name = models.CharField(max_length=256, blank = False)
 	title = models.CharField(max_length=256, blank = True)
 	priority = models.IntegerField(default=0)
-	group = models.ForeignKey('GraphGroup', related_name='graphs')
+	group = models.ForeignKey('GraphGroup', on_delete=models.CASCADE, related_name='graphs')
 	command = models.TextField(blank = False)
 
 	class Meta:
