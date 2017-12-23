@@ -9,6 +9,11 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+exclude:
+  - python: "2.7"
+    env: "DJANGO_VERSION='>=2.0,<2.1'"
+  - python: "2.7"
+    env: "DJANGO_VERSION=''"
 # command to install dependencies
 install:
   - "pip install Django$DJANGO_VERSION"
