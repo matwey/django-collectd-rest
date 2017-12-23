@@ -4,6 +4,7 @@ env:
   - "DJANGO_VERSION='>=1.9,<1.10'"
   - "DJANGO_VERSION='>=1.10,<1.11'"
   - "DJANGO_VERSION='>=1.11,<1.12'"
+  - "DJANGO_VERSION='>=2.0,<2.1'"
   - "DJANGO_VERSION=''"
 python:
   - "2.7"
