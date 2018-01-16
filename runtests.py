@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import sys
 
 def runtests():
 	os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.test_settings")

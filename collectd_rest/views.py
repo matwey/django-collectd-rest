@@ -1,9 +1,6 @@
 from collectd_rest import models, serializers, renderers
 from rest_framework import viewsets
-from rest_framework.renderers import JSONRenderer
-from rest_framework.decorators import detail_route
 from rest_framework.settings import api_settings
-from django.http import HttpResponse
 
 class GraphGroupViewSet(viewsets.ModelViewSet):
 	queryset = models.GraphGroup.objects.all()

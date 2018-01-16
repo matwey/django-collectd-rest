@@ -1,6 +1,5 @@
-from collectd_rest.rrd import render, RRDError
+from collectd_rest.rrd import render
 from django.db import models
-from django.core.exceptions import ValidationError
 
 class GraphGroup(models.Model):
 	name = models.CharField(max_length=256, blank = False, unique = True)

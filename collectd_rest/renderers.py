@@ -1,5 +1,4 @@
 from rest_framework import renderers
-from collectd_rest.rrd import render
 
 class ImageRenderer(renderers.BaseRenderer):
 	charset = None
