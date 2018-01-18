@@ -33,8 +33,8 @@ class Migration(migrations.Migration):
                 ('max_age', models.PositiveIntegerField()),
             ],
         ),
-	# collectd_rest.models.default_graph_granularity implies that object
-	# with name='default' exists
+        # collectd_rest.models.default_graph_granularity implies that object
+        # with name='default' exists
         migrations.RunPython(
             forward_default_graph_granularity,
             reverse_default_graph_granularity
