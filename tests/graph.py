@@ -30,6 +30,7 @@ class GraphTest(TestCase):
 			'command': command}, format='json')
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		graph = Graph.objects.get(name='graph1')
+		self.assertEqual(graph.group, group)
 		mock.assert_called_with(command, format)
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create2(self, mock):

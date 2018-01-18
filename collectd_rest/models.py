@@ -5,6 +5,9 @@ class GraphGroup(models.Model):
 	name = models.SlugField(max_length=256, blank = False, unique = True)
 	title = models.CharField(max_length=256, blank = False)
 
+	def __repr__(self):
+		return '<GraphGroup %s>' % self.name
+
 class Graph(models.Model):
 	name = models.SlugField(max_length=256, blank = False)
 	title = models.CharField(max_length=256, blank = True)
@@ -18,3 +21,6 @@ class Graph(models.Model):
 
 	def render(self, format):
 		return render(self.command, format)
+
+	def __repr__(self):
+		return '<Graph %s in %s>' % (self.name, self.group.name)
