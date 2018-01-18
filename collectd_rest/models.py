@@ -15,7 +15,7 @@ class GraphGroup(models.Model):
 	def __repr__(self):
 		return '<GraphGroup %s>' % self.name
 
-# lambdas can’t be used for field options like default because they can’t be
+# lambdas can't be used for field options like default because they can't be
 # serialized by migrations.
 def default_graph_granularity():
 	return GraphGranularity.objects.get(name='default').pk
