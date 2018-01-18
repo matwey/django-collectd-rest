@@ -20,13 +20,19 @@ class CommandField(serializers.CharField):
 		return data
 
 class GraphSerializer(serializers.ModelSerializer):
+	granularity = serializers.SlugRelatedField(slug_field='name', queryset=models.GraphGranularity.objects.all(), required=False)
 	group = serializers.SlugRelatedField(slug_field='name', queryset=models.GraphGroup.objects.all(), required=True)
 	url = serializers.HyperlinkedIdentityField(view_name='graph-detail', read_only=True)
 	command = CommandField()
 
 	class Meta:
 		model = models.Graph
-		fields = ('id', 'name', 'title', 'group', 'url', 'command', 'priority')
+		fields = ('id', 'name', 'title', 'group', 'url', 'command', 'priority', 'granularity')
+
+class GraphGranularitySerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.GraphGranularity
+		fields = ('id', 'name', 'max_age')
 
 class GraphGroupSerializer(serializers.ModelSerializer):
 	graphs = GraphSerializer(many=True, read_only=True)

@@ -2,6 +2,11 @@ from collectd_rest import models, serializers, renderers
 from rest_framework import viewsets
 from rest_framework.settings import api_settings
 
+class GraphGranularityViewSet(viewsets.ModelViewSet):
+	queryset = models.GraphGranularity.objects.all()
+	serializer_class = serializers.GraphGranularitySerializer
+	lookup_field = 'name'
+
 class GraphGroupViewSet(viewsets.ModelViewSet):
 	queryset = models.GraphGroup.objects.all()
 	serializer_class = serializers.GraphGroupSerializer

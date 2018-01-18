@@ -5,7 +5,7 @@ except ImportError:
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
-from collectd_rest.models import Graph, GraphGroup
+from collectd_rest.models import Graph, GraphGroup, GraphGranularity
 from collectd_rest.rrd import RRDError
 try:
 	from unittest.mock import patch, create_autospec
@@ -23,6 +23,7 @@ class GraphTest(TestCase):
 
 		url = reverse('graph-list')
 		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		granularity = GraphGranularity.objects.get(name='default')
 		response = self.client.post(url, {
 			'title': 'New Graph',
 			'name': 'graph1',
@@ -31,6 +32,7 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		graph = Graph.objects.get(name='graph1')
 		self.assertEqual(graph.group, group)
+		self.assertEqual(graph.granularity, granularity)
 		mock.assert_called_with(command, format)
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create2(self, mock):
@@ -68,6 +70,24 @@ class GraphTest(TestCase):
 			'name': 'graph1',
 			'group': group.name}, format='json')
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+	@patch('collectd_rest.serializers.render')
+	def test_graph_create4(self, mock):
+		command = 'format'
+		format = 'PNG'
+
+		url = reverse('graph-list')
+		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		granularity = GraphGranularity.objects.create(name="custom", max_age=42)
+		response = self.client.post(url, {
+			'title': 'New Graph',
+			'name': 'graph1',
+			'group': group.name,
+			'granularity' : 'custom',
+			'command': command}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		graph = Graph.objects.get(name='graph1')
+		self.assertEqual(graph.granularity, granularity)
+		mock.assert_called_with(command, format)
 
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create_duplicates(self, mock):
