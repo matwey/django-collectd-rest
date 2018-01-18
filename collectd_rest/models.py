@@ -26,7 +26,7 @@ class Graph(models.Model):
 	priority = models.IntegerField(default=0)
 	group = models.ForeignKey('GraphGroup', on_delete=models.CASCADE, related_name='graphs')
 	command = models.TextField(blank = False)
-	granularity = models.ForeignKey('GraphGranularity', on_delete=models.SET_DEFAULT, default=default_graph_granularity, related_name='graphs')
+	granularity = models.ForeignKey('GraphGranularity', on_delete=models.PROTECT, default=default_graph_granularity, related_name='graphs')
 
 	class Meta:
 		unique_together = ("name", "group")

@@ -35,14 +35,3 @@ class GraphGranularityTest(TestCase):
 			'name': 'default',
 			'max_age': 42}, format='json')
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-	def test_granularity_delete1(self):
-		command = 'format'
-
-		granularity = GraphGranularity.objects.get(name='default')
-		granularity2 = GraphGranularity.objects.create(name='custom', max_age=42)
-		group = GraphGroup.objects.create(name="group1", title="Group 1")
-		graph = Graph.objects.create(name="graph1", title="Graph 1", command=command, group=group, granularity=granularity2)
-		self.assertEqual(granularity2, graph.granularity)
-		self.assertEqual((1, {'collectd_rest.GraphGranularity': 1}), granularity2.delete())
-		graph.refresh_from_db()
-		self.assertEqual(granularity, graph.granularity)
