@@ -1,5 +1,5 @@
 from collectd_rest import models
-from collectd_rest.rrd import render, RRDError
+from collectd_rest.rrd import render
 from collectd_rest.renderers import ImageRenderer
 from rest_framework import serializers
 
@@ -10,8 +10,8 @@ class CommandField(serializers.CharField):
 		data = super(CommandField,self).run_validation(data)
 		try:
 			render(data, "PNG")
-		except RRDError as e:
-			raise serializers.ValidationError(e.message)
+		except Exception as e:
+			raise serializers.ValidationError(str(e))
 		return data
 	def to_representation(self, data):
 		renderer = self.context['request'].accepted_renderer

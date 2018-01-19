@@ -6,7 +6,6 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 from collectd_rest.models import Graph, GraphGroup, GraphGranularity
-from collectd_rest.rrd import RRDError
 try:
 	from unittest.mock import patch, create_autospec
 except ImportError:
@@ -151,7 +150,7 @@ class GraphTest(TestCase):
 
 	@patch('collectd_rest.serializers.render')
 	def test_graph_validate1(self, mock):
-		mock.side_effect = RRDError('Boom!')
+		mock.side_effect = Exception('Boom!')
 		command = "wrong command"
 
 		url = reverse('graph-list')
