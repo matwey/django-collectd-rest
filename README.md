@@ -16,7 +16,7 @@ The following prerequisites are required to operate django-collectd-rest:
 * [rrd] - high performance data logging and graphing system for time series data.
 
 To use django-collectd-rest in your django project, include the following code into your ```settings.py```:
-```
+```python
 INSTALLED_APPS = (
      #...
     'rest_framework',
@@ -25,7 +25,7 @@ INSTALLED_APPS = (
 ```
 
 Into your ```urls.py``` you have to add the following:
-```
+```python
 urlpatterns = patterns('',
     #...
     url(r'^collectd_rest/', include('collectd_rest.urls')),
@@ -36,7 +36,7 @@ urlpatterns = patterns('',
 The whole configuration is stored into the project database, there is not separate dedicated configfile. New graphs and groups are added by creating new objects. The latter can be done in different ways.
 
 Using django database console:
-```
+```python
 from collectd_rest import models
 group = models.GraphGroup(title="The Group", name="group1")
 group.save()
@@ -57,7 +57,7 @@ You may utilise all caching mechanisms provided by [Django] framework. See [Djan
 
 ## Using
 To demonstrate how the framework can be used, let's look at the following JavaScript code ([jQuery] is used here). The following code renders the group names ```mygroup``` into corresponding ```div``` element, and the ```myothergroup``` into the other one.
-```
+```HTML
 <html>
 <head>
 <script type="text/javascript" src="http://yastatic.net/jquery/2.1.1/jquery.js"></script>
