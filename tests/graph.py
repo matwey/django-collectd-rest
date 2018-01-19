@@ -117,30 +117,37 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(len(Graph.objects.filter(name='graph')),2)
 
-	def graph_render_helper(self, mock, mime, format):
+	def graph_render_helper(self, mock, mime, format, max_age):
 		command = 'format'
 
+		granularity = GraphGranularity.objects.create(name="custom", max_age=max_age)
 		group = GraphGroup.objects.create(name="group1", title="Group 1")
-		graph = Graph.objects.create(name="graph1", title="Graph 1", command = command, group=group)
+		graph = Graph.objects.create(name="graph1", title="Graph 1", command=command, group=group, granularity=granularity)
 		url = reverse('graph-detail', args=[graph.id])
 		response = self.client.get(url, HTTP_ACCEPT=mime)
 		cache_control = [x.strip() for x in response['Cache-Control'].split(",")]
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response["Content-Type"], mime)
-		self.assertEqual(sorted(cache_control), ['max-age=0', 'must-revalidate'])
+		self.assertEqual(sorted(cache_control), ["max-age={0}".format(max_age), 'must-revalidate'])
 		mock.assert_called_with(command, format)
 
 	@patch('collectd_rest.serializers.render')
 	def test_graph_render_png(self, mock):
 		format = 'png'
 		mime = "image/png"
-		self.graph_render_helper(mock, mime, format)
+		self.graph_render_helper(mock, mime, format, 0)
 
 	@patch('collectd_rest.serializers.render')
-	def test_graph_render_svg(self, mock):
+	def test_graph_render_svg1(self, mock):
 		format = 'svg'
 		mime = "image/svg+xml"
-		self.graph_render_helper(mock, mime, format)
+		self.graph_render_helper(mock, mime, format, 0)
+
+	@patch('collectd_rest.serializers.render')
+	def test_graph_render_svg2(self, mock):
+		format = 'svg'
+		mime = "image/svg+xml"
+		self.graph_render_helper(mock, mime, format, 42)
 
 	@patch('collectd_rest.serializers.render')
 	def test_graph_validate1(self, mock):
