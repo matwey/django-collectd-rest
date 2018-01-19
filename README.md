@@ -7,6 +7,8 @@ django-collectd-rest is a simple [Django] application to demonstrate RRD plots g
 
 There are two major things in django-collectd-rest, *graphs* are grouped into *groups*. Both the graphs and the groups are accessible through REST API. Using mutable access (POST, PUT, DELETE), you can configure you hierarchy, create new graphs or alter existing ones. You also can grab meta-info or ready PNG images by means of GET requests. Genuine ```rrdtool``` is currently used to render the plots.
 
+Newly introduced *granularity* object is a kind of policy hinting image freshness lifetime, or its time resolution. Currently, it is used to correctly set `max-age` in response `Cache-Control` header. The default granularity has `max-age=0`.
+
 ## Installation
 
 The following prerequisites are required to operate django-collectd-rest:
