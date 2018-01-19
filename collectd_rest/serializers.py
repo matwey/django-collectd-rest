@@ -24,10 +24,11 @@ class GraphSerializer(serializers.ModelSerializer):
 	group = serializers.SlugRelatedField(slug_field='name', queryset=models.GraphGroup.objects.all(), required=True)
 	url = serializers.HyperlinkedIdentityField(view_name='graph-detail', read_only=True)
 	command = CommandField()
+	max_age = serializers.IntegerField(source='granularity.max_age', read_only=True)
 
 	class Meta:
 		model = models.Graph
-		fields = ('id', 'name', 'title', 'group', 'url', 'command', 'priority', 'granularity')
+		fields = ('id', 'name', 'title', 'group', 'url', 'command', 'priority', 'granularity', 'max_age')
 
 class GraphGranularitySerializer(serializers.ModelSerializer):
 	class Meta:

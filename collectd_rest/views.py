@@ -13,6 +13,6 @@ class GraphGroupViewSet(viewsets.ModelViewSet):
 	lookup_field = 'name'
 
 class GraphViewSet(viewsets.ModelViewSet):
-	queryset = models.Graph.objects.all()
+	queryset = models.Graph.objects.prefetch_related('granularity').all()
 	serializer_class = serializers.GraphSerializer
 	renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [renderers.PNGRenderer, renderers.SVGRenderer, ]

@@ -124,8 +124,10 @@ class GraphTest(TestCase):
 		graph = Graph.objects.create(name="graph1", title="Graph 1", command = command, group=group)
 		url = reverse('graph-detail', args=[graph.id])
 		response = self.client.get(url, HTTP_ACCEPT=mime)
+		cache_control = [x.strip() for x in response['Cache-Control'].split(",")]
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response["Content-Type"], mime)
+		self.assertEqual(sorted(cache_control), ['max-age=0', 'must-revalidate'])
 		mock.assert_called_with(command, format)
 
 	@patch('collectd_rest.serializers.render')
