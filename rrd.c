@@ -75,15 +75,18 @@ rrd_render(PyObject* self, PyObject* args) {
 	if (!PyArg_ParseTuple(args, "ss", &command, &format))
 		return NULL;
 
-	// FIXME: strdup to python
 	command_args = strdup(command);
-	if (command_args == NULL)
+	if (command_args == NULL) {
+		PyErr_SetString(PyExc_MemoryError, "strdup: Out of memory");
 		goto err_strdup;
+	}
 	command_argc = rrd_parse_arguments(command_args);
 
 	argv = PyMem_New(char*, 3 + 1 + command_argc + 1);
-	if (argv == NULL)
+	if (argv == NULL) {
+		PyErr_SetString(PyExc_MemoryError, "PyMem_New: Out of memory");
 		goto err_PyMem_New;
+	}
 
 	argc = 0;
 	argv[argc++] = "graph";
