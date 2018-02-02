@@ -2,6 +2,30 @@
 #include <ctype.h>
 #include <rrd.h>
 
+/*
+ * # Implementation note
+ *
+ * There are at least three different versions of existing rrd python
+ * bindings: old upstream, new upstream, and python-rrdtool from PyPi. In
+ * order to ensure good user experience for all librrd versions and
+ * installation ways (pip, distribution packaging manager, etc.), we use our
+ * tiny wrapper here and don't rely on existing solutions.
+ *
+ * Unfortunately, some existing python bindings as well as librrd itself also
+ * have multithreading issues. For instance:
+ * * https://github.com/oetiker/rrdtool-1.x/issues/867
+ * * https://github.com/oetiker/rrdtool-1.x/issues/865
+ *
+ * This is limiting, because modern Django starts multithreading application
+ * even when simple `manage.py runserver` invoced. Our current implementation
+ * assumes that librrd calls are protected by Python GIL. So as long as you
+ * don't use librrd from packages other than that, it is safe to run
+ * multithreading application. If future versions of librrd become reentrant,
+ * then additional optimizations can be also performed in this module:
+ * depending on using librrd version Python GIL may be released before
+ * `rrdgraph_v()` call and aquired after that leading to real multithreading.
+ */
+
 static PyObject* RRDError;
 
 static int rrd_parse_arguments(char* command) {
