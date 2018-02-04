@@ -146,7 +146,7 @@ rrd_render(PyObject* self, PyObject* args) {
 		goto err_rrd_graph_image;
 	}
 
-	ret = PyByteArray_FromStringAndSize(
+	ret = PyBytes_FromStringAndSize(
 		(const char*)(rrd_info_it->value.u_blo.ptr),
 		rrd_info_it->value.u_blo.size);
 	if (ret == NULL)
