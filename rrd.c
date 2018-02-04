@@ -84,6 +84,7 @@ rrd_render(PyObject* self, PyObject* args) {
 
 	char* command;
 	char* format;
+	char* upper_format;
 
 	char* command_args;
 	int command_argc;
@@ -99,10 +100,19 @@ rrd_render(PyObject* self, PyObject* args) {
 	if (!PyArg_ParseTuple(args, "ss", &command, &format))
 		return NULL;
 
+	upper_format = strdup(format);
+	if (upper_format == NULL) {
+		PyErr_SetString(PyExc_MemoryError, "strdup: Out of memory");
+		goto err_strdup_format;
+	}
+	for (it = upper_format; *it != '\0'; ++it) {
+		*it = toupper(*it);
+	}
+
 	command_args = strdup(command);
 	if (command_args == NULL) {
 		PyErr_SetString(PyExc_MemoryError, "strdup: Out of memory");
-		goto err_strdup;
+		goto err_strdup_command;
 	}
 	command_argc = rrd_parse_arguments(command_args);
 
@@ -116,7 +126,7 @@ rrd_render(PyObject* self, PyObject* args) {
 	argv[argc++] = "graph";
 	argv[argc++] = "-";
 	argv[argc++] = "--imgformat";
-	argv[argc++] = format;
+	argv[argc++] = upper_format;
 
 	for (i = 0, it = command_args; i < command_argc; ++i, ++it) {
 		argv[argc++] = it;
@@ -159,7 +169,9 @@ err_rrd_graph:
 	PyMem_Del(argv);
 err_PyMem_New:
 	free(command_args);
-err_strdup:
+err_strdup_command:
+	free(upper_format);
+err_strdup_format:
 	return ret;
 }
 
