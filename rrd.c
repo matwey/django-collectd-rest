@@ -28,6 +28,14 @@
 
 static PyObject* RRDError;
 
+static int isquote(char x) {
+	return x == '\'' || x == '\"';
+}
+
+static int isescape(char x) {
+	return x == '\\';
+}
+
 static int rrd_parse_arguments(char* command) {
 	char* it;
 	char* out;
@@ -35,8 +43,8 @@ static int rrd_parse_arguments(char* command) {
 		enum { space, nospace } s;
 		union {
 			struct {
+				char quoted_char;
 				unsigned int escaped : 1;
-				unsigned int quoted : 1;
 			} s_nospace;
 		};
 	} state = { space };
@@ -48,23 +56,30 @@ static int rrd_parse_arguments(char* command) {
 				if (!isspace(*it)) {
 					argc++;
 					state.s = nospace;
-					state.s_nospace.escaped = (*it == '\\');
-					state.s_nospace.quoted = (*it == '\"');
+					state.s_nospace.escaped = isescape(*it);
+					state.s_nospace.quoted_char = isquote(*it) ? *it : 0;
 
-					if (*it != '\\' && *it != '\"')
+					if (!isescape(*it) && !isquote(*it))
 						*(out++) = *it;
 				}
 			break;
 			case nospace:
 				if (state.s_nospace.escaped) {
+					if (state.s_nospace.quoted_char
+						&& !(*it == state.s_nospace.quoted_char || isescape(*it))) {
+
+						*(out++) = '\\';
+					}
 					*(out++) = *it;
 					state.s_nospace.escaped = 0;
 					break;
-				} else if (*it == '\\') {
+				} else if (isescape(*it)) {
 					state.s_nospace.escaped = 1;
-				} else if (*it == '\"') {
-					state.s_nospace.quoted = ~state.s_nospace.quoted;
-				} else if (!state.s_nospace.quoted && isspace(*it)) {
+				} else if (state.s_nospace.quoted_char == *it) {
+					state.s_nospace.quoted_char = 0;
+				} else if (!state.s_nospace.quoted_char && isquote(*it)) {
+					state.s_nospace.quoted_char = *it;
+				} else if (!state.s_nospace.quoted_char && isspace(*it)) {
 					state.s = space;
 					*(out++) = '\0';
 				} else {
@@ -82,17 +97,15 @@ static PyObject*
 rrd_render(PyObject* self, PyObject* args) {
 	PyObject* ret = NULL;
 
-	char* command;
-	char* format;
-	char* upper_format;
-
-	char* command_args;
-	int command_argc;
-
+	int    i;
+	char*  it;
+	int    argc;
 	char** argv;
-	int argc;
-	char* it;
-	int i;
+	char*  format;
+	char*  command;
+	int    command_argc;
+	char*  command_args;
+	char*  upper_format;
 
 	rrd_info_t* rrd_info;
 	rrd_info_t* rrd_info_it;
@@ -175,8 +188,44 @@ err_strdup_format:
 	return ret;
 }
 
+static PyObject*
+rrd_split(PyObject* self, PyObject* args) {
+	PyObject* ret = NULL;
+
+	int   i;
+	char* it;
+	char* command;
+	int   command_argc;
+	char* command_args;
+
+	if (!PyArg_ParseTuple(args, "s", &command))
+		return NULL;
+
+	command_args = strdup(command);
+	if (command_args == NULL) {
+		PyErr_SetString(PyExc_MemoryError, "strdup: Out of memory");
+		goto err_strdup_command;
+	}
+	command_argc = rrd_parse_arguments(command_args);
+
+	ret = PyList_New(command_argc);
+	if (ret == NULL)
+		goto err_PyList_New;
+
+	for (i = 0, it = command_args; i < command_argc; ++i, ++it) {
+		PyList_SET_ITEM(ret, i, PyBytes_FromString(it));
+		for(; *it != '\0'; ++it);
+	}
+
+err_PyList_New:
+	free(command_args);
+err_strdup_command:
+	return ret;
+}
+
 static PyMethodDef RRDMethods[] = {
 	{"render", rrd_render, METH_VARARGS, NULL},
+	{"split", rrd_split, METH_VARARGS, NULL},
 	{NULL, NULL, 0, NULL}
 };
 
