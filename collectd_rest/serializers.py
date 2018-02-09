@@ -11,7 +11,7 @@ class CommandField(serializers.CharField):
 		try:
 			render(data, "PNG")
 		except RRDError as e:
-			raise serializers.ValidationError(e.message)
+			raise serializers.ValidationError(str(e))
 		return data
 	def to_representation(self, data):
 		renderer = self.context['request'].accepted_renderer
