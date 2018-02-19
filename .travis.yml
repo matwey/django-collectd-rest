@@ -27,5 +27,6 @@ deploy:
   user: "matwey"
   password:
     secure: jd6B+7S1DCQXFWgb0wNnjmRSXnFtj3+1ertEcwH75OEu6LYBkQhpPTbgQGb7sBCPe49aF6MGIYMhnW98gakfwR6SNcmJT7y6v9IfuV1nLcvxD2EBUYQXqzhPQzEKXTFc/9XC7FAoO0A279sfskzmJwT91rizP8OIbAMxHADED1Y=
+  distributions: "sdist bdist_wheel"
   on:
     tags: true
