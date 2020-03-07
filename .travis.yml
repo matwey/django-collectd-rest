@@ -26,12 +26,18 @@ install:
 - pip install -r requirements.txt
 script:
 - python setup.py test
-deploy:
-  provider: pypi
-  user: "matwey"
-  password:
-    secure: jd6B+7S1DCQXFWgb0wNnjmRSXnFtj3+1ertEcwH75OEu6LYBkQhpPTbgQGb7sBCPe49aF6MGIYMhnW98gakfwR6SNcmJT7y6v9IfuV1nLcvxD2EBUYQXqzhPQzEKXTFc/9XC7FAoO0A279sfskzmJwT91rizP8OIbAMxHADED1Y=
-  distributions: "sdist bdist_wheel"
-  skip_existing: true
-  on:
-    tags: true
+
+jobs:
+  include:
+    - stage: deploy
+      script: skip
+      python: '3.6'
+      deploy: &pypi
+        provider: pypi
+        user: matwey
+        password:
+          secure: "jHeoTj526HVzYXgja/CobfB9wkrbbQwoxvkK/ptEdGlxDaU94HirD/0WfaJdDed/AlHJBylbHp6bMMDUye49PHieZ+T4Et8KnwZDmQVQ84bw/8MX1Q0spIBZC3ndWNTJsJ535thN8MW5Ct3A7SkxI8vOxV+YqqmbOziFO4u7ugo="
+        skip_existing: true
+        distributions: sdist bdist_wheel
+        on:
+          tags: true
