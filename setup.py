@@ -14,7 +14,7 @@ rrd = Extension('collectd_rest.rrd',
 
 setup(
 	name='django-collectd-rest',
-	version='0.2.1.1',
+	version='0.2.2',
 	packages=['collectd_rest', 'collectd_rest.migrations'],
 	ext_modules=[rrd],
 	include_package_data=True,
