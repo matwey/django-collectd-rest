@@ -9,16 +9,6 @@ python:
 - '3.4'
 - '3.5'
 - '3.6'
-matrix:
-  exclude:
-  - python: '2.7'
-    env: DJANGO_VERSION='>=2.0,<2.1'
-  - python: '2.7'
-    env: DJANGO_VERSION='>=2.1,<2.2'
-  - python: '3.4'
-    env: DJANGO_VERSION='>=2.1,<2.2'
-  - python: '2.7'
-    env: DJANGO_VERSION=''
 before_install:
 - sudo apt-get install -y librrd-dev
 install:
@@ -28,6 +18,15 @@ script:
 - python setup.py test
 
 jobs:
+  exclude:
+  - python: '2.7'
+    env: DJANGO_VERSION='>=2.0,<2.1'
+  - python: '2.7'
+    env: DJANGO_VERSION='>=2.1,<2.2'
+  - python: '3.4'
+    env: DJANGO_VERSION='>=2.1,<2.2'
+  - python: '2.7'
+    env: DJANGO_VERSION=''
   include:
     - stage: deploy
       script: skip
