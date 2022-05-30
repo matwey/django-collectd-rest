@@ -89,6 +89,17 @@ class GraphTest(TestCase):
 		self.assertEqual(graph.granularity, granularity)
 		mock.assert_called_with(command, format)
 
+	def test_graph_detail1(self):
+		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		granularity = GraphGranularity.objects.get(name='default')
+		graph = Graph.objects.create(name="graph1", title="Graph 1", command="format", group=group, granularity=granularity)
+
+		url = reverse('graph-detail', args=[graph.id])
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		json = response.json()
+		self.assertEqual(json['id'], graph.id)
+
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create_duplicates(self, mock):
 		command = 'format'
