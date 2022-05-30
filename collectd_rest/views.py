@@ -8,11 +8,11 @@ class GraphGranularityViewSet(viewsets.ModelViewSet):
 	lookup_field = 'name'
 
 class GraphGroupViewSet(viewsets.ModelViewSet):
-	queryset = models.GraphGroup.objects.all()
+	queryset = models.GraphGroup.objects.prefetch_related('graphs', 'graphs__granularity')
 	serializer_class = serializers.GraphGroupSerializer
 	lookup_field = 'name'
 
 class GraphViewSet(viewsets.ModelViewSet):
-	queryset = models.Graph.objects.prefetch_related('granularity').all()
+	queryset = models.Graph.objects.select_related('granularity')
 	serializer_class = serializers.GraphSerializer
 	renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES + [renderers.PNGRenderer, renderers.SVGRenderer, ]
