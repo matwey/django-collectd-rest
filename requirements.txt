@@ -1,3 +1,0 @@
-coreapi
-djangorestframework
-mock
