@@ -2,9 +2,10 @@ try:
 	from django.urls import reverse
 except ImportError:
 	from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework import status
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, force_authenticate
 from collectd_rest.models import Graph, GraphGroup, GraphGranularity
 from collectd_rest.rrd import RRDError
 try:
@@ -18,7 +19,7 @@ class GraphTest(TestCase):
 
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create1(self, mock):
-		command = 'format'
+		command = 'TEST'
 		format = 'PNG'
 
 		url = reverse('graph-list')
@@ -36,7 +37,7 @@ class GraphTest(TestCase):
 		mock.assert_called_with(command, format)
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create2(self, mock):
-		command = 'format'
+		command = 'TEST'
 		format = 'png'
 
 		url = reverse('graph-list')
@@ -72,7 +73,7 @@ class GraphTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create4(self, mock):
-		command = 'format'
+		command = 'TEST'
 		format = 'PNG'
 
 		url = reverse('graph-list')
@@ -90,19 +91,36 @@ class GraphTest(TestCase):
 		mock.assert_called_with(command, format)
 
 	def test_graph_detail1(self):
+		command = "TEST"
 		group = GraphGroup.objects.create(name="group1", title="Group 1")
 		granularity = GraphGranularity.objects.get(name='default')
-		graph = Graph.objects.create(name="graph1", title="Graph 1", command="format", group=group, granularity=granularity)
+		graph = Graph.objects.create(name="graph1", title="Graph 1", command=command, group=group, granularity=granularity)
 
 		url = reverse('graph-detail', args=[graph.id])
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		json = response.json()
 		self.assertEqual(json['id'], graph.id)
+		self.assertNotIn("command", json)
+
+	def test_graph_detail2(self):
+		command = "TEST"
+		group = GraphGroup.objects.create(name="group1", title="Group 1")
+		user = User.objects.create(username='gendalf')
+		granularity = GraphGranularity.objects.get(name='default')
+		graph = Graph.objects.create(name="graph1", title="Graph 1", command=command, group=group, granularity=granularity)
+
+		url = reverse('graph-detail', args=[graph.id])
+		self.client.force_authenticate(user=user)
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		json = response.json()
+		self.assertEqual(json['id'], graph.id)
+		self.assertEqual(json['command'], command)
 
 	@patch('collectd_rest.serializers.render')
 	def test_graph_create_duplicates(self, mock):
-		command = 'format'
+		command = 'TEST'
 		format = 'png'
 
 		url = reverse('graph-list')

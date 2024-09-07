@@ -23,7 +23,14 @@ class GraphSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = models.Graph
-		fields = ('id', 'name', 'title', 'group', 'url', 'command', 'priority', 'granularity', 'max_age')
+		fields = '__all__'
+
+class UnauthenticatedGraphSerializer(GraphSerializer):
+	command = None
+
+	class Meta:
+		model = models.Graph
+		exclude = ('command',)
 
 class GraphGranularitySerializer(serializers.ModelSerializer):
 	class Meta:
