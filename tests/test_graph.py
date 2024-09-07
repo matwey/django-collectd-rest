@@ -129,7 +129,7 @@ class GraphTest(TestCase):
 		self.assertEqual(len(Graph.objects.filter(name='graph')),2)
 
 	def graph_render_helper(self, mock, mime, format, max_age):
-		command = 'format'
+		command = 'TEST'
 
 		granularity = GraphGranularity.objects.create(name="custom", max_age=max_age)
 		group = GraphGroup.objects.create(name="group1", title="Group 1")
@@ -142,19 +142,19 @@ class GraphTest(TestCase):
 		self.assertEqual(sorted(cache_control), ["max-age={0}".format(max_age), 'must-revalidate'])
 		mock.assert_called_with(command, format)
 
-	@patch('collectd_rest.serializers.render')
+	@patch('collectd_rest.renderers.render')
 	def test_graph_render_png(self, mock):
 		format = 'png'
 		mime = "image/png"
 		self.graph_render_helper(mock, mime, format, 0)
 
-	@patch('collectd_rest.serializers.render')
+	@patch('collectd_rest.renderers.render')
 	def test_graph_render_svg1(self, mock):
 		format = 'svg'
 		mime = "image/svg+xml"
 		self.graph_render_helper(mock, mime, format, 0)
 
-	@patch('collectd_rest.serializers.render')
+	@patch('collectd_rest.renderers.render')
 	def test_graph_render_svg2(self, mock):
 		format = 'svg'
 		mime = "image/svg+xml"

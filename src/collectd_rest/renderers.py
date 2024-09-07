@@ -1,3 +1,4 @@
+from collectd_rest.rrd import render
 from django.utils.cache import patch_cache_control
 from rest_framework import renderers, status
 
@@ -15,11 +16,13 @@ class ImageRenderer(renderers.BaseRenderer):
 			return None
 
 		patch_cache_control(response, max_age=data['max_age'], must_revalidate=True)
-		return data['command']
+
+		return render(data['command'], self.format)
 
 class PNGRenderer(ImageRenderer):
 	media_type = 'image/png'
 	format = 'png'
+
 class SVGRenderer(ImageRenderer):
 	media_type = 'image/svg+xml'
 	format = 'svg'

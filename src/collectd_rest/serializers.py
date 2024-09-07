@@ -13,11 +13,6 @@ class CommandField(serializers.CharField):
 		except RRDError as e:
 			raise serializers.ValidationError(str(e))
 		return data
-	def to_representation(self, data):
-		renderer = self.context['request'].accepted_renderer
-		if isinstance(renderer, ImageRenderer):
-			return render(data, renderer.format)
-		return data
 
 class GraphSerializer(serializers.ModelSerializer):
 	granularity = serializers.SlugRelatedField(slug_field='name', queryset=models.GraphGranularity.objects.all(), required=False)
