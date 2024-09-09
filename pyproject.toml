@@ -46,7 +46,7 @@ wheel.packages = ["src/collectd_rest"]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
 django_find_project = false
-pythonpath = ". src"
+pythonpath = "."
 testpaths = [
     "src/collectd_rest",
     "tests",
