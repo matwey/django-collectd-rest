@@ -95,12 +95,18 @@ static int rrd_parse_arguments(char* command) {
 
 static PyObject*
 rrd_render(PyObject* self, PyObject* args) {
+#ifdef LIBRRD_HAS_MUTABLE_ARGV // before rrdtool 1.9.0
+	typedef char* arg_t;
+#else
+	typedef const char* arg_t;
+#endif // LIBRRD_HAS_MUTABLE_ARGV
+
 	PyObject* ret = NULL;
 
 	int    i;
 	char*  it;
 	int    argc;
-	char** argv;
+	arg_t* argv;
 	char*  format;
 	char*  command;
 	int    command_argc;
@@ -129,7 +135,7 @@ rrd_render(PyObject* self, PyObject* args) {
 	}
 	command_argc = rrd_parse_arguments(command_args);
 
-	argv = PyMem_New(char*, 3 + 1 + command_argc + 1);
+	argv = PyMem_New(arg_t, 3 + 1 + command_argc + 1);
 	if (argv == NULL) {
 		PyErr_SetString(PyExc_MemoryError, "PyMem_New: Out of memory");
 		goto err_PyMem_New;
