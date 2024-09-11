@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "django-collectd-rest"
-version = "0.2.5"
+version = "0.2.6"
 authors = [
   {name = "Matwey V. Kornilov", email = "matwey.kornilov@gmail.com"},
 ]
