@@ -40,7 +40,7 @@ Repository = "https://github.com/matwey/django-collectd-rest.git"
 Issues = "https://github.com/matwey/django-collectd-rest/issues"
 
 [tool.scikit-build]
-cmake.verbose = true
+build.verbose = true
 wheel.packages = ["src/collectd_rest"]
 
 [tool.pytest.ini_options]
